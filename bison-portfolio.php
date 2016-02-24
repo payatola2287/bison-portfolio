@@ -16,28 +16,41 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 define( 'TEXTDOMAIN','bison-portfolio' );
 
-require_once( plugin_dir_path . '/inc/post-type.php' );
+require_once( 'inc/post-type.php' );
+require_once( 'inc/taxonomy.php' );
+require_once( 'inc/shortcodes.php' );
+require_once( 'inc/extra.php' );
+
+
 if( ! class_exists( 'Bison_Portfolio' ) ){
     
     class Bison_Portfolio{
-        /** 
-            Plugin Hooks
-        **/
-        public function __construct(){}
+        public function __construct(){
+            /** 
+                Post types
+            **/
+            $project = new Bison_PostType( 'project','Project','Projects' );
+            /** 
+                Shortcodes
+            **/
+            $shortcodes = new Bison_Shortcodes();
+        }
         
         /** 
             Plugin activation
         **/
-        public static activate(){
-            /**
-                Register Post Types
-            **/
-            $project = new Bison_PostType( 'project','Project','Projects',array() );
-        }
+        public static function activate(){}
         /**
             Plugin deactivation
         **/
+        public static function deactivate(){
+        
+        }
+        
+        
         
     }
-    
+    register_activation_hook(__FILE__, array('Bison_Portfolio', 'activate'));
+    register_deactivation_hook(__FILE__, array('Bison_Portfolio', 'deactivate'));
+    new Bison_Portfolio();
 }

@@ -18,7 +18,7 @@ class Bison_PostType{
             'label'                 => __( 'Post Type', 'text_domain' ),
             'description'           => __( 'Post Type Description', 'text_domain' ),
             'labels'                => $labels,
-            'supports'              => array( 'thumbnail','revisions','editor' ),
+            'supports'              => array( 'thumbnail','revisions','editor','title' ),
             'taxonomies'            => array( 'category', 'post_tag' ),
             'hierarchical'          => false,
             'public'                => true,
@@ -33,7 +33,8 @@ class Bison_PostType{
             'publicly_queryable'    => true,
             'capability_type'       => 'post',
             'menu_icon'             => null,
-            'show_in_rest'          => false
+            'show_in_rest'          => false,
+            'rewrite'               => true
         );
         $this->postType = $pt;
         $this->singular = $s;
@@ -45,12 +46,12 @@ class Bison_PostType{
     /**
         Set the post type labels and register it.
     **/
-    private function bison_custom_post_type() {
+    public function bison_custom_post_type() {
             
             $labels = array(
                 'name'                  => _x( $this->singular, 'Post Type General Name', TEXTDOMAIN ),
                 'singular_name'         => _x( $this->singular, 'Post Type Singular Name', TEXTDOMAIN ),
-                'menu_name'             => __( $this->singular, TEXTDOMAIN ),
+                'menu_name'             => __( $this->plural, TEXTDOMAIN ),
                 'name_admin_bar'        => __( $this->singular, TEXTDOMAIN ),
                 'archives'              => __( $this->singular.' Archives', TEXTDOMAIN ),
                 'parent_item_colon'     => __( 'Parent '.$this->singular.': ', TEXTDOMAIN ),
@@ -74,31 +75,13 @@ class Bison_PostType{
                 'items_list_navigation' => __( 'Items list navigation', TEXTDOMAIN ),
                 'filter_items_list'     => __( 'Filter items list', TEXTDOMAIN ),
             );
-            $args = array(
-                'label'                 => __( $this->singular, TEXTDOMAIN ),
-                'description'           => __( $postSettings[ 'description' ], TEXTDOMAIN ),
-                'labels'                => $labels,
-                'supports'              => $postSettings[ 'supports' ],
-                'taxonomies'            => $postSettings[ 'taxonomies' ],
-                'hierarchical'          => $postSettings[ 'hierarchical' ],
-                'public'                => $postSettings[ 'public' ],
-                'show_ui'               => $postSettings[ 'show_ui' ],
-                'show_in_menu'          => $postSettings[ 'show_in_menu' ],
-                'menu_position'         => $postSettings[ 'menu_position' ],
-                'show_in_admin_bar'     => $postSettings[ 'show_in_admin_bar' ],
-                'show_in_nav_menus'     => $postSettings[ 'show_in_nav_menus' ],
-                'can_export'            => $postSettings[ 'can_export' ],
-                'has_archive'           => $postSettings[ 'has_archive' ],		
-                'exclude_from_search'   => $postSettings[ 'exclude_from_search' ],
-                'publicly_queryable'    => $postSettings[ 'publicly_queryable' ],
-                'capability_type'       => $postSettings[ 'capability_type' ],
-            );
-            register_post_type( $this->postType, $args );
+            $this->postSettings['labels'] = $labels;
+            register_post_type( $this->postType, $this->postSettings );
 
         }
     
         private function hook(){
-            add_action( 'init', array( $this, 'bison_custom_post_type' );
+            add_action( 'init', array( $this, 'bison_custom_post_type' ) );
         }
     
 }
